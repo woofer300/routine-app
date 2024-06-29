@@ -32,26 +32,17 @@ export default function Task({ text }: { text: string }) {
   const sectionFourCoveredHeight = useSharedValue(0);
   const sectionFiveCoveredWidth = useSharedValue(0);
 
-  const isSectionOneLastAnimationIncreasing = useSharedValue(false);
-  const isSectionTwoLastAnimationIncreasing = useSharedValue(false);
-  const isSectionThreeLastAnimationIncreasing = useSharedValue(false);
-  const isSectionFourLastAnimationIncreasing = useSharedValue(false);
-  const isSectionFiveLastAnimationIncreasing = useSharedValue(false);
-
   const isIncreasing = useSharedValue(false);
 
   const sectionOneAnimatedStyles = useAnimatedStyle(() => ({
     width: withTiming(
       sectionOneCoveredWidth.value,
-      { duration: sectionOneWidth * msPerDp, easing: Easing.linear },
+      { duration: 3000, easing: Easing.linear },
       (wasNotCancelled) => {
-        if (isIncreasing.value !== isSectionOneLastAnimationIncreasing.value) {
-          console.log(1 + " " + isIncreasing.value);
-          isSectionOneLastAnimationIncreasing.value = isIncreasing.value;
-          if (wasNotCancelled && isIncreasing.value) {
-            sectionTwoCoveredHeight.value = sectionTwoHeight;
-          }
+        if (wasNotCancelled && isIncreasing.value) {
+          sectionTwoCoveredHeight.value = sectionTwoHeight;
         }
+        console.log("1");
       },
     ),
   }));
@@ -59,9 +50,8 @@ export default function Task({ text }: { text: string }) {
   const sectionTwoAnimatedStyles = useAnimatedStyle(() => ({
     height: withTiming(
       sectionTwoCoveredHeight.value,
-      { duration: sectionTwoHeight * msPerDp, easing: Easing.linear },
+      { duration: 3000, easing: Easing.linear },
       (wasNotCancelled) => {
-        console.log(2 + " " + isIncreasing.value);
         if (wasNotCancelled) {
           if (isIncreasing.value) {
             sectionThreeCoveredWidth.value = sectionThreeWidth;
@@ -69,6 +59,7 @@ export default function Task({ text }: { text: string }) {
             sectionOneCoveredWidth.value = 0;
           }
         }
+        console.log("2");
       },
     ),
   }));
@@ -76,9 +67,8 @@ export default function Task({ text }: { text: string }) {
   const sectionThreeAnimatedStyles = useAnimatedStyle(() => ({
     height: withTiming(
       sectionThreeCoveredWidth.value,
-      { duration: sectionThreeWidth * msPerDp, easing: Easing.linear },
+      { duration: 3000, easing: Easing.linear },
       (wasNotCancelled) => {
-        console.log(3 + " " + isIncreasing.value);
         if (wasNotCancelled) {
           if (isIncreasing.value) {
             sectionFourCoveredHeight.value = sectionFourHeight;
@@ -86,6 +76,7 @@ export default function Task({ text }: { text: string }) {
             sectionTwoCoveredHeight.value = 0;
           }
         }
+        console.log("3");
       },
     ),
   }));
