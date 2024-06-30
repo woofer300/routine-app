@@ -2,6 +2,7 @@ import { View, Text, Pressable, Dimensions } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
@@ -9,7 +10,7 @@ import React, { useRef } from "react";
 
 export default function Task({ text }: { text: string }) {
   const thickness = 35;
-  const timeToComplete = 2000;
+  const timeToComplete = 1250;
 
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
@@ -18,78 +19,97 @@ export default function Task({ text }: { text: string }) {
   const sectionThreeWidth = screenWidth - thickness;
   const sectionFourHeight = screenHeight - thickness;
   const sectionFiveWidth = screenWidth / 2 - thickness;
-  const totalLength =
+  const totalDistance =
     sectionOneWidth +
     sectionTwoHeight +
     sectionThreeWidth +
     sectionFourHeight +
     sectionFiveWidth;
-  const msPerDp = timeToComplete / totalLength;
 
-  const sectionOneCoveredWidth = useSharedValue(0);
-  const sectionTwoCoveredHeight = useSharedValue(0);
-  const sectionThreeCoveredWidth = useSharedValue(0);
-  const sectionFourCoveredHeight = useSharedValue(0);
-  const sectionFiveCoveredWidth = useSharedValue(0);
+  const msPerDp = timeToComplete / totalDistance;
 
-  const isIncreasing = useSharedValue(false);
+  const coveredDistance = useSharedValue(0);
+
+  const sectionOneCoveredWidth = useDerivedValue(() => {
+    return Math.min(coveredDistance.value, sectionOneWidth);
+  });
+  const sectionTwoCoveredHeight = useDerivedValue(() => {
+    return Math.max(
+      0,
+      Math.min(coveredDistance.value - sectionOneWidth, sectionTwoHeight),
+    );
+  });
+  const sectionThreeCoveredWidth = useDerivedValue(() => {
+    return Math.max(
+      0,
+      Math.min(
+        coveredDistance.value - sectionOneWidth - sectionTwoHeight,
+        sectionThreeWidth,
+      ),
+    );
+  });
+  const sectionFourCoveredHeight = useDerivedValue(() => {
+    return Math.max(
+      0,
+      Math.min(
+        coveredDistance.value -
+          sectionOneWidth -
+          sectionTwoHeight -
+          sectionThreeWidth,
+        sectionFourHeight,
+      ),
+    );
+  });
+  const sectionFiveCoveredWidth = useDerivedValue(() => {
+    return Math.max(
+      0,
+      Math.min(
+        coveredDistance.value -
+          sectionOneWidth -
+          sectionTwoHeight -
+          sectionThreeWidth -
+          sectionFourHeight,
+        sectionFiveWidth,
+      ),
+    );
+  });
 
   const sectionOneAnimatedStyles = useAnimatedStyle(() => ({
-    width: withTiming(
-      sectionOneCoveredWidth.value,
-      { duration: 3000, easing: Easing.linear },
-      (wasNotCancelled) => {
-        if (wasNotCancelled && isIncreasing.value) {
-          sectionTwoCoveredHeight.value = sectionTwoHeight;
-        }
-        console.log("1");
-      },
-    ),
+    width: sectionOneCoveredWidth.value,
   }));
 
   const sectionTwoAnimatedStyles = useAnimatedStyle(() => ({
-    height: withTiming(
-      sectionTwoCoveredHeight.value,
-      { duration: 3000, easing: Easing.linear },
-      (wasNotCancelled) => {
-        if (wasNotCancelled) {
-          if (isIncreasing.value) {
-            sectionThreeCoveredWidth.value = sectionThreeWidth;
-          } else {
-            sectionOneCoveredWidth.value = 0;
-          }
-        }
-        console.log("2");
-      },
-    ),
+    height: sectionTwoCoveredHeight.value,
   }));
-
   const sectionThreeAnimatedStyles = useAnimatedStyle(() => ({
-    height: withTiming(
-      sectionThreeCoveredWidth.value,
-      { duration: 3000, easing: Easing.linear },
-      (wasNotCancelled) => {
-        if (wasNotCancelled) {
-          if (isIncreasing.value) {
-            sectionFourCoveredHeight.value = sectionFourHeight;
-          } else {
-            sectionTwoCoveredHeight.value = 0;
-          }
-        }
-        console.log("3");
-      },
-    ),
+    width: sectionThreeCoveredWidth.value,
+  }));
+  const sectionFourAnimatedStyles = useAnimatedStyle(() => ({
+    height: sectionFourCoveredHeight.value,
+  }));
+  const sectionFiveAnimatedStyles = useAnimatedStyle(() => ({
+    width: sectionFiveCoveredWidth.value,
   }));
 
   function onPressIn() {
-    isIncreasing.value = true;
-    sectionOneCoveredWidth.value = sectionOneWidth;
+    coveredDistance.value = withTiming(totalDistance, {
+      duration: (totalDistance - coveredDistance.value) * msPerDp,
+      easing: Easing.linear,
+    });
+  }
+
+  function onPressOut() {
+    coveredDistance.value = withTiming(0, {
+      duration: coveredDistance.value * msPerDp,
+      easing: Easing.linear,
+    });
   }
 
   return (
     <Pressable
       className="grow items-center justify-center bg-blue-950"
       onPressIn={onPressIn}
+      onPressOut={onPressOut}
     >
       <View className="p-[35]">
         <Text className="text-5xl font-semibold text-gray-100">{text}</Text>
@@ -126,22 +146,22 @@ export default function Task({ text }: { text: string }) {
             sectionThreeAnimatedStyles,
           ]}
         />
-        {/*<Animated.View*/}
-        {/*  className="absolute left-0 z-10 bg-green-500"*/}
-        {/*  style={{*/}
-        {/*    bottom: thickness,*/}
-        {/*    width: thickness,*/}
-        {/*    height: sectionFourCoveredHeight,*/}
-        {/*  }}*/}
-        {/*/>*/}
-        {/*<Animated.View*/}
-        {/*  className="absolute top-0 z-10 bg-green-500"*/}
-        {/*  style={{*/}
-        {/*    left: thickness,*/}
-        {/*    width: sectionFiveCoveredWidth,*/}
-        {/*    height: thickness,*/}
-        {/*  }}*/}
-        {/*/>*/}
+        <Animated.View
+          className="absolute left-0 z-10 bg-green-500"
+          style={{
+            bottom: thickness,
+            width: thickness,
+            height: sectionFourCoveredHeight,
+          }}
+        />
+        <Animated.View
+          className="absolute top-0 z-10 bg-green-500"
+          style={{
+            left: thickness,
+            width: sectionFiveCoveredWidth,
+            height: thickness,
+          }}
+        />
       </View>
     </Pressable>
   );
