@@ -1,14 +1,17 @@
 import { View, Text, Pressable, Dimensions } from "react-native";
 import Animated, {
   Easing,
+  runOnJS,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
 export default function Task({ text }: { text: string }) {
+  const [completed, setCompleted] = useState(false);
+
   const thickness = 35;
   const timeToComplete = 1250;
 
@@ -92,10 +95,18 @@ export default function Task({ text }: { text: string }) {
   }));
 
   function onPressIn() {
-    coveredDistance.value = withTiming(totalDistance, {
-      duration: (totalDistance - coveredDistance.value) * msPerDp,
-      easing: Easing.linear,
-    });
+    coveredDistance.value = withTiming(
+      totalDistance,
+      {
+        duration: (totalDistance - coveredDistance.value) * msPerDp,
+        easing: Easing.linear,
+      },
+      (wasNotCancelled) => {
+        if (wasNotCancelled) {
+          runOnJS(setCompleted)(true);
+        }
+      },
+    );
   }
 
   function onPressOut() {
@@ -105,13 +116,20 @@ export default function Task({ text }: { text: string }) {
     });
   }
 
-  return (
+  return completed ? (
+    <View
+      className="grow items-center justify-center border-green-500 bg-blue-950"
+      style={{ borderWidth: thickness }}
+    >
+      <Text className="text-5xl font-semibold text-gray-100">{text}</Text>
+    </View>
+  ) : (
     <Pressable
       className="grow items-center justify-center bg-blue-950"
       onPressIn={onPressIn}
       onPressOut={onPressOut}
     >
-      <View className="p-[35]">
+      <View style={{ padding: thickness }}>
         <Text className="text-5xl font-semibold text-gray-100">{text}</Text>
       </View>
       {/* Progress bar */}
