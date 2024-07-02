@@ -12,11 +12,13 @@ import React, { useRef, useState } from "react";
 export default function Task({ text }: { text: string }) {
   const [completed, setCompleted] = useState(false);
 
-  const thickness = 35;
   const timeToComplete = 1250;
 
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
+
+  const thickness = 0.08139534883 * Math.min(screenWidth, screenHeight);
+
   const sectionOneWidth = screenWidth / 2;
   const sectionTwoHeight = screenHeight - thickness;
   const sectionThreeWidth = screenWidth - thickness;
@@ -80,7 +82,6 @@ export default function Task({ text }: { text: string }) {
   const sectionOneAnimatedStyles = useAnimatedStyle(() => ({
     width: sectionOneCoveredWidth.value,
   }));
-
   const sectionTwoAnimatedStyles = useAnimatedStyle(() => ({
     height: sectionTwoCoveredHeight.value,
   }));
@@ -121,7 +122,9 @@ export default function Task({ text }: { text: string }) {
       className="grow items-center justify-center border-green-500 bg-blue-950"
       style={{ borderWidth: thickness }}
     >
-      <Text className="text-5xl font-semibold text-gray-100">{text}</Text>
+      <Text className="text-5xl font-semibold text-gray-100 sm:text-7xl lg:text-8xl">
+        {text}
+      </Text>
     </View>
   ) : (
     <Pressable
@@ -130,7 +133,9 @@ export default function Task({ text }: { text: string }) {
       onPressOut={onPressOut}
     >
       <View style={{ padding: thickness }}>
-        <Text className="text-5xl font-semibold text-gray-100">{text}</Text>
+        <Text className="text-5xl font-semibold text-gray-100 sm:text-7xl lg:text-8xl">
+          {text}
+        </Text>
       </View>
       {/* Progress bar */}
       <View className="absolute h-full w-full">
