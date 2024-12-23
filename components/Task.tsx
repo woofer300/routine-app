@@ -192,11 +192,11 @@ export default function Task({
         />
         {/* Sections of green progress */}
         <Animated.View
-          className="bg-yellowGreen absolute left-1/2 top-0 z-10"
+          className="absolute left-1/2 top-0 z-10 bg-yellowGreen"
           style={[{ height: thickness }, sectionOneAnimatedStyles]}
         />
         <Animated.View
-          className="bg-yellowGreen absolute right-0 z-10"
+          className="absolute right-0 z-10 bg-yellowGreen"
           style={[
             {
               top: thickness,
@@ -206,7 +206,7 @@ export default function Task({
           ]}
         />
         <Animated.View
-          className="bg-yellowGreen absolute bottom-0 z-10"
+          className="absolute bottom-0 z-10 bg-yellowGreen"
           style={[
             {
               right: thickness,
@@ -216,7 +216,7 @@ export default function Task({
           ]}
         />
         <Animated.View
-          className="bg-yellowGreen absolute left-0 z-10"
+          className="absolute left-0 z-10 bg-yellowGreen"
           style={{
             bottom: thickness,
             width: thickness,
@@ -224,7 +224,7 @@ export default function Task({
           }}
         />
         <Animated.View
-          className="bg-yellowGreen absolute top-0 z-10"
+          className="absolute top-0 z-10 bg-yellowGreen"
           style={{
             left: thickness,
             width: sectionFiveCoveredWidth,
