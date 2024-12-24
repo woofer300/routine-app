@@ -161,7 +161,7 @@ export default function Task({
 
   return taskState == "bar-full" ? (
     <Animated.View
-      className="fixed flex h-full w-full items-center justify-center bg-blue-950"
+      className="absolute flex h-full w-full items-center justify-center bg-blue-950"
       style={[
         { borderWidth: thickness, zIndex: -id },
         completedColorAnimatedStyle,
@@ -173,7 +173,7 @@ export default function Task({
     </Animated.View>
   ) : taskState == "bar-not-full" ? (
     <Pressable
-      className="fixed flex h-full w-full items-center justify-center bg-blue-950"
+      className="absolute flex h-full w-full items-center justify-center bg-blue-950"
       onPressIn={onPressIn}
       onPressOut={onPressOut}
       style={{ zIndex: -id }}
@@ -235,7 +235,7 @@ export default function Task({
     </Pressable>
   ) : (
     <View
-      className="fixed flex h-full w-full items-center justify-center border-green-500 bg-blue-950"
+      className="absolute flex h-full w-full items-center justify-center border-green-500 bg-blue-950"
       style={[{ borderWidth: thickness, zIndex: -id }]}
     >
       <Text className="text-5xl font-semibold text-gray-100 sm:text-7xl lg:text-8xl">
