@@ -1,4 +1,5 @@
 import Task from "@/components/Task";
+import ShakeToExit from "@/components/ShakeToExit";
 import { useState } from "react";
 
 export default function Index() {
@@ -13,7 +14,6 @@ export default function Index() {
 
   function removeTask(id: number) {
     const newThing = taskTexts.filter((taskText) => taskText.id !== id);
-    console.log(newThing);
     setTaskTexts(newThing);
   }
 
@@ -29,6 +29,7 @@ export default function Index() {
           />
         );
       })}
+      <ShakeToExit />
     </>
   );
 }
