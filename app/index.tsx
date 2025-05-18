@@ -1,3 +1,4 @@
+import "../global.css";
 import Task from "@/components/Task";
 import ShakeToExit from "@/components/ShakeToExit";
 import { useState } from "react";
