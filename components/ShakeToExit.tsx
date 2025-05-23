@@ -58,7 +58,7 @@ export default function ShakeToExit() {
   return (
     <>
       {isVisible && (
-        <View className="absolute bottom-0 right-0 z-20 bg-red-600 p-3">
+        <View className="absolute right-5 top-5 z-20 bg-red-600 p-3">
           <Feather name="x" size={30} color="white" />
         </View>
       )}
