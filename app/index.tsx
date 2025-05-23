@@ -20,6 +20,7 @@ export default function Index() {
 
   return (
     <>
+      <ShakeToExit />
       {taskTexts.map((taskText) => {
         return (
           <Task
@@ -30,7 +31,6 @@ export default function Index() {
           />
         );
       })}
-      <ShakeToExit />
     </>
   );
 }
