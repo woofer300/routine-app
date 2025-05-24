@@ -4,9 +4,10 @@ import { useEffect, useState, useRef } from "react";
 import { View } from "react-native";
 import { Accelerometer, AccelerometerMeasurement } from "expo-sensors";
 import { EventSubscription } from "expo-modules-core";
+import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 
 export default function ShakeToExit() {
-  const [isVisible, setIsVisible] = useState(false);
+  const opacity = useSharedValue(0);
   const timeoutToHideButtonID = useRef<number | null>(null);
 
   const lastAccelerometerMeasurementAboveThreshold =
@@ -52,12 +53,13 @@ export default function ShakeToExit() {
                     lastAccelerometerMeasurementAboveThreshold.current.z ** 2,
                 );
               if (gsMagnitudeInOppositeDirection > shakeThreshold) {
+                console.log(opacity.value);
                 lastAccelerometerMeasurementAboveThreshold.current = null;
-                !isVisible && setIsVisible(true);
+                opacity.value = withTiming(1, { duration: 250 });
                 timeoutToHideButtonID.current &&
                   clearTimeout(timeoutToHideButtonID.current);
                 timeoutToHideButtonID.current = setTimeout(() => {
-                  setIsVisible(false);
+                  opacity.value = withTiming(0, { duration: 250 });
                 }, 5000);
               }
             } else {
@@ -82,11 +84,12 @@ export default function ShakeToExit() {
 
   return (
     <>
-      {isVisible && (
-        <View className="absolute right-5 top-5 z-20 bg-red-600 p-3">
-          <Feather name="x" size={30} color="white" />
-        </View>
-      )}
+      <Animated.View
+        className="absolute right-5 top-5 z-20 bg-red-600 p-3"
+        style={{ opacity }}
+      >
+        <Feather name="x" size={30} color="white" />
+      </Animated.View>
     </>
   );
 }
