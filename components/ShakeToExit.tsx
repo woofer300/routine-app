@@ -1,7 +1,6 @@
 import React from "react";
 import { Feather } from "@expo/vector-icons";
 import { useEffect, useState, useRef } from "react";
-import { View } from "react-native";
 import { Accelerometer, AccelerometerMeasurement } from "expo-sensors";
 import { EventSubscription } from "expo-modules-core";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
@@ -53,7 +52,6 @@ export default function ShakeToExit() {
                     lastAccelerometerMeasurementAboveThreshold.current.z ** 2,
                 );
               if (gsMagnitudeInOppositeDirection > shakeThreshold) {
-                console.log(opacity.value);
                 lastAccelerometerMeasurementAboveThreshold.current = null;
                 opacity.value = withTiming(1, { duration: 250 });
                 timeoutToHideButtonID.current &&

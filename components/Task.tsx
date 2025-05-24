@@ -142,16 +142,16 @@ export default function Task({
   }
 
   useEffect(() => {
-    if (taskState == "color-transitioned") {
+    if (taskState === "color-transitioned") {
       setTimeout(() => removeTask(id), 500);
     } else {
       colorShiftProgress.value = withTiming(
-        taskState == "bar-full" ? 1 : 0,
+        taskState === "bar-full" ? 1 : 0,
         {
           duration: timeToTransitionColor,
         },
         (wasNotCancelled) => {
-          if (wasNotCancelled && taskState == "bar-full") {
+          if (wasNotCancelled && taskState === "bar-full") {
             runOnJS(setTaskState)("color-transitioned");
           }
         },
@@ -159,7 +159,7 @@ export default function Task({
     }
   }, [taskState]);
 
-  return taskState == "bar-full" ? (
+  return taskState === "bar-full" ? (
     <Animated.View
       className="absolute flex h-full w-full items-center justify-center bg-blue-950"
       style={[
@@ -171,7 +171,7 @@ export default function Task({
         {text}
       </Text>
     </Animated.View>
-  ) : taskState == "bar-not-full" ? (
+  ) : taskState === "bar-not-full" ? (
     <Pressable
       className="absolute flex h-full w-full items-center justify-center bg-blue-950"
       onPressIn={onPressIn}
