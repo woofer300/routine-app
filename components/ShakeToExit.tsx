@@ -9,16 +9,19 @@ export default function ShakeToExit() {
   const [isVisible, setIsVisible] = useState(false);
   const timeoutToHideButtonID = useRef<number | null>(null);
 
-  const shakeThreshold = 4;
-  const shakeCooldown = 500;
-  const lastShakeTime = useRef(Date.now());
+  const lastAccelerometerMeasurementAboveThreshold =
+    useRef<AccelerometerMeasurement | null>(null);
+
+  // In gs
+  const shakeThreshold = 3;
+  const maxTimeBetweenAccelerations = 250;
 
   const [subscription, setSubscription] = useState<EventSubscription | null>(
     null,
   );
 
   const _subscribe = () => {
-    Accelerometer.setUpdateInterval(200);
+    Accelerometer.setUpdateInterval(30);
     setSubscription(
       Accelerometer.addListener(
         (accelerometerMeasurement: AccelerometerMeasurement) => {
@@ -27,18 +30,40 @@ export default function ShakeToExit() {
               accelerometerMeasurement.y ** 2 +
               accelerometerMeasurement.z ** 2,
           );
-          if (
-            gsMagnitude > shakeThreshold &&
-            Date.now() - lastShakeTime.current > shakeCooldown
-          ) {
-            lastShakeTime.current = Date.now();
-            !isVisible && setIsVisible(true);
-            if (timeoutToHideButtonID.current) {
-              clearTimeout(timeoutToHideButtonID.current);
+          if (gsMagnitude > shakeThreshold) {
+            if (
+              lastAccelerometerMeasurementAboveThreshold.current &&
+              (accelerometerMeasurement.timestamp -
+                lastAccelerometerMeasurementAboveThreshold.current.timestamp) *
+                1000 <
+                maxTimeBetweenAccelerations
+            ) {
+              // Dot product with opposite direction of last acceleration measurement above threshold
+              const gsMagnitudeInOppositeDirection =
+                (accelerometerMeasurement.x *
+                  -lastAccelerometerMeasurementAboveThreshold.current.x +
+                  accelerometerMeasurement.y *
+                    -lastAccelerometerMeasurementAboveThreshold.current.y +
+                  accelerometerMeasurement.z *
+                    -lastAccelerometerMeasurementAboveThreshold.current.z) /
+                Math.sqrt(
+                  lastAccelerometerMeasurementAboveThreshold.current.x ** 2 +
+                    lastAccelerometerMeasurementAboveThreshold.current.y ** 2 +
+                    lastAccelerometerMeasurementAboveThreshold.current.z ** 2,
+                );
+              if (gsMagnitudeInOppositeDirection > shakeThreshold) {
+                lastAccelerometerMeasurementAboveThreshold.current = null;
+                !isVisible && setIsVisible(true);
+                timeoutToHideButtonID.current &&
+                  clearTimeout(timeoutToHideButtonID.current);
+                timeoutToHideButtonID.current = setTimeout(() => {
+                  setIsVisible(false);
+                }, 5000);
+              }
+            } else {
+              lastAccelerometerMeasurementAboveThreshold.current =
+                accelerometerMeasurement;
             }
-            timeoutToHideButtonID.current = setTimeout(() => {
-              setIsVisible(false);
-            }, 5000);
           }
         },
       ),
