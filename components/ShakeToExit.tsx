@@ -15,6 +15,8 @@ export default function ShakeToExit() {
   // In gs
   const shakeThreshold = 3;
   const maxTimeBetweenAccelerations = 250;
+  const visibilityDuration = 5000;
+  const fadeAnimationDuration = 250;
 
   const [subscription, setSubscription] = useState<EventSubscription | null>(
     null,
@@ -53,12 +55,16 @@ export default function ShakeToExit() {
                 );
               if (gsMagnitudeInOppositeDirection > shakeThreshold) {
                 lastAccelerometerMeasurementAboveThreshold.current = null;
-                opacity.value = withTiming(1, { duration: 250 });
+                opacity.value = withTiming(1, {
+                  duration: fadeAnimationDuration,
+                });
                 timeoutToHideButtonID.current &&
                   clearTimeout(timeoutToHideButtonID.current);
                 timeoutToHideButtonID.current = setTimeout(() => {
-                  opacity.value = withTiming(0, { duration: 250 });
-                }, 5000);
+                  opacity.value = withTiming(0, {
+                    duration: fadeAnimationDuration,
+                  });
+                }, visibilityDuration);
               }
             } else {
               lastAccelerometerMeasurementAboveThreshold.current =
