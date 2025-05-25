@@ -179,7 +179,7 @@ export default function Task({
       style={{ zIndex: -id }}
     >
       <View style={{ padding: thickness }}>
-        <Text className="text-5xl font-semibold text-gray-100 sm:text-7xl lg:text-8xl">
+        <Text className="text-center text-5xl font-semibold text-gray-100 sm:text-7xl lg:text-8xl">
           {text}
         </Text>
       </View>
