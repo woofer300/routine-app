@@ -4,6 +4,8 @@ import { useEffect, useState, useRef } from "react";
 import { Accelerometer, AccelerometerMeasurement } from "expo-sensors";
 import { EventSubscription } from "expo-modules-core";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
+import { Pressable } from "react-native";
+import { Link } from "expo-router";
 
 export default function ShakeToExit() {
   const opacity = useSharedValue(0);
@@ -87,13 +89,12 @@ export default function ShakeToExit() {
   }, []);
 
   return (
-    <>
-      <Animated.View
-        className="absolute right-5 top-5 z-20 bg-red-600 p-3"
-        style={{ opacity }}
-      >
-        <Feather name="x" size={30} color="white" />
-      </Animated.View>
-    </>
+    <Link href="/" asChild>
+      <Pressable className="absolute right-5 top-5 z-20">
+        <Animated.View className="bg-red-600 p-3" style={{ opacity }}>
+          <Feather name="x" size={30} color="white" />
+        </Animated.View>
+      </Pressable>
+    </Link>
   );
 }
