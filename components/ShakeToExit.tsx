@@ -5,9 +5,10 @@ import { Accelerometer, AccelerometerMeasurement } from "expo-sensors";
 import { EventSubscription } from "expo-modules-core";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 import { Pressable } from "react-native";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 
 export default function ShakeToExit() {
+  const router = useRouter();
   const opacity = useSharedValue(0);
   const timeoutToHideButtonID = useRef<number | null>(null);
 
@@ -23,6 +24,14 @@ export default function ShakeToExit() {
   const [subscription, setSubscription] = useState<EventSubscription | null>(
     null,
   );
+
+  const handleExit = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/");
+    }
+  };
 
   const _subscribe = () => {
     Accelerometer.setUpdateInterval(30);
@@ -89,12 +98,10 @@ export default function ShakeToExit() {
   }, []);
 
   return (
-    <Link href="/" asChild>
-      <Pressable className="absolute right-5 top-5 z-20">
-        <Animated.View className="bg-red-600 p-3" style={{ opacity }}>
-          <Feather name="x" size={30} color="white" />
-        </Animated.View>
-      </Pressable>
-    </Link>
+    <Pressable className="absolute right-5 top-5 z-20" onPress={handleExit}>
+      <Animated.View className="bg-red-600 p-3" style={{ opacity }}>
+        <Feather name="x" size={30} color="white" />
+      </Animated.View>
+    </Pressable>
   );
 }
