@@ -167,7 +167,7 @@ export default function Task({
         completedColorAnimatedStyle,
       ]}
     >
-      <Text className="text-5xl font-semibold text-gray-100 sm:text-7xl lg:text-8xl">
+      <Text className="text-center text-5xl font-semibold text-gray-100 sm:text-7xl lg:text-8xl">
         {text}
       </Text>
     </Animated.View>
@@ -238,7 +238,7 @@ export default function Task({
       className="absolute flex h-full w-full items-center justify-center border-green-500 bg-blue-950"
       style={[{ borderWidth: thickness, zIndex: -id }]}
     >
-      <Text className="text-5xl font-semibold text-gray-100 sm:text-7xl lg:text-8xl">
+      <Text className="text-center text-5xl font-semibold text-gray-100 sm:text-7xl lg:text-8xl">
         {text}
       </Text>
     </View>
