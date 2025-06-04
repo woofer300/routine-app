@@ -1,4 +1,6 @@
-import { View, Text, Pressable, Dimensions } from "react-native";
+import { View, Text, Pressable } from "react-native";
+import { Dimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   Easing,
   interpolateColor,
@@ -23,19 +25,21 @@ export default function Task({
 
   const [taskState, setTaskState] = useState<TaskState>("bar-not-full");
 
+  const insets = useSafeAreaInsets();
+  const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+  const taskWidth = screenWidth - insets.left - insets.right;
+  const taskHeight = screenHeight - insets.top - insets.bottom;
+
   const timeToFillProgressBar = 1000;
   const timeToTransitionColor = 200;
 
-  const screenWidth = Dimensions.get("window").width;
-  const screenHeight = Dimensions.get("window").height;
+  const thickness = 0.0813 * Math.min(taskWidth, taskHeight);
 
-  const thickness = 0.0813 * Math.min(screenWidth, screenHeight);
-
-  const sectionOneWidth = screenWidth / 2;
-  const sectionTwoHeight = screenHeight - thickness;
-  const sectionThreeWidth = screenWidth - thickness;
-  const sectionFourHeight = screenHeight - thickness;
-  const sectionFiveWidth = screenWidth / 2 - thickness;
+  const sectionOneWidth = taskWidth / 2;
+  const sectionTwoHeight = taskHeight - thickness;
+  const sectionThreeWidth = taskWidth - thickness;
+  const sectionFourHeight = taskHeight - thickness;
+  const sectionFiveWidth = taskWidth / 2 - thickness;
   const totalDistance =
     sectionOneWidth +
     sectionTwoHeight +
@@ -159,11 +163,21 @@ export default function Task({
     }
   }, [taskState]);
 
+  // Base style with positioning that respects SafeAreaView
+  const positionStyle = {
+    top: insets.top,
+    left: insets.left,
+    width: taskWidth,
+    height: taskHeight,
+    zIndex: -id,
+  };
+
   return taskState === "bar-full" ? (
     <Animated.View
-      className="absolute flex h-full w-full items-center justify-center bg-blue-950"
+      className="absolute flex items-center justify-center bg-blue-950"
       style={[
-        { borderWidth: thickness, zIndex: -id },
+        positionStyle,
+        { borderWidth: thickness },
         completedColorAnimatedStyle,
       ]}
     >
@@ -173,10 +187,10 @@ export default function Task({
     </Animated.View>
   ) : taskState === "bar-not-full" ? (
     <Pressable
-      className="absolute flex h-full w-full items-center justify-center bg-blue-950"
+      className="absolute flex items-center justify-center bg-blue-950"
       onPressIn={onPressIn}
       onPressOut={onPressOut}
-      style={{ zIndex: -id }}
+      style={positionStyle}
     >
       <View style={{ padding: thickness }}>
         <Text className="text-center text-5xl font-semibold text-gray-100 sm:text-7xl lg:text-8xl">
@@ -184,11 +198,18 @@ export default function Task({
         </Text>
       </View>
       {/* Progress bar */}
-      <View className="absolute h-full w-full">
+      <View
+        className="absolute"
+        style={{ width: taskWidth, height: taskHeight }}
+      >
         {/* Gray border */}
         <View
-          className="absolute z-0 h-full w-full border-gray-700"
-          style={{ borderWidth: thickness }}
+          className="absolute z-0 border-gray-700"
+          style={{
+            borderWidth: thickness,
+            width: taskWidth,
+            height: taskHeight,
+          }}
         />
         {/* Sections of green progress */}
         <Animated.View
@@ -235,8 +256,8 @@ export default function Task({
     </Pressable>
   ) : (
     <View
-      className="absolute flex h-full w-full items-center justify-center border-green-500 bg-blue-950"
-      style={[{ borderWidth: thickness, zIndex: -id }]}
+      className="absolute flex items-center justify-center border-green-500 bg-blue-950"
+      style={[positionStyle, { borderWidth: thickness }]}
     >
       <Text className="text-center text-5xl font-semibold text-gray-100 sm:text-7xl lg:text-8xl">
         {text}
