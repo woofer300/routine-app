@@ -6,9 +6,11 @@ import { EventSubscription } from "expo-modules-core";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 import { Pressable } from "react-native";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ShakeToExit() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const opacity = useSharedValue(0);
   const timeoutToHideButtonID = useRef<number | null>(null);
 
@@ -98,7 +100,11 @@ export default function ShakeToExit() {
   }, []);
 
   return (
-    <Pressable className="absolute right-5 top-5 z-20" onPress={handleExit}>
+    <Pressable
+      className="absolute right-5 z-20"
+      style={{ top: insets.top + 20 }}
+      onPress={handleExit}
+    >
       <Animated.View className="bg-red-600 p-3" style={{ opacity }}>
         <Feather name="x" size={30} color="white" />
       </Animated.View>
