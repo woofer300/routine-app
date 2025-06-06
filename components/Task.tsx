@@ -169,7 +169,7 @@ export default function Task({
     left: insets.left,
     width: taskWidth,
     height: taskHeight,
-    zIndex: -id,
+    zIndex: 256 - id,
   };
 
   return taskState === "bar-full" ? (
