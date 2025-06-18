@@ -101,7 +101,7 @@ export default function ShakeToExit() {
 
   return (
     <Pressable
-      className="absolute right-5 z-20"
+      className="absolute right-5 z-[300]"
       style={{ top: insets.top + 20 }}
       onPress={handleExit}
     >
